@@ -3,7 +3,7 @@ const axios = require("axios");
 const path = require("path");
 const { getPrefix } = global.utils;
 const { commands, aliases } = global.GoatBot;
-const doNotDelete = "VANEA AI\n";
+const doNotDelete = "𝐥𝐨𝐯𝐞𝐥𝐲\n";
 
 function formatFont(text) {
   const fontMapping = {
