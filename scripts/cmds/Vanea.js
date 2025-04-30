@@ -37,7 +37,7 @@ async function queryVanea(prompt, sessionId) {
 
 module.exports = {
   config: {
-    name: "vanea",
+    name: "lovely",
     aliases: ["chat", "ai"],
     version: "1.4",
     author: "Ayanfe",
