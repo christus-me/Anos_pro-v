@@ -1,69 +1,46 @@
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+const axios = require("axios");
 
-module.exports = {
-  config: {
-    name: "flux",
-    aliases: ["fl"],
-    version: "1.0.0",
-    author: "ayanfe",
-    role: 0,
-    shortDescription: "Generate an image based on a prompt using flux API created by Lance",
-    longDescription: "generate image with flux API created by Lance ",
-    category: "AI",
-    guide: {
-      en: "{pn} <prompt>"
-    },
-    usages: "/flux <prompt>",
-    cooldowns: 5,
-    dependencies: {
-      "axios": "",
-      "fs": "",
-      "path": ""
-    }
-  },
-  onStart: async function({ message, api, args, event }) {
-    if (args.length === 0) return message.reply("Please provide a prompt to generate an image.");
+module.exports.config = {
+  name: "flux",
+  version: "2.0",
+  role: 0,
+  author: "Dipto",
+  description: "Flux Image Generator",
+  category: "𝗜𝗠𝗔𝗚𝗘 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗢𝗥",
+  premium: true,
+  guide: "{pn} [prompt] --ratio 1024x1024\n{pn} [prompt]",
+  countDown: 15,
+};
 
+module.exports.onStart = async ({ event, args, api }) => {
+  const dipto = "https://www.noobs-api.rf.gd/dipto";
+
+  try {
     const prompt = args.join(" ");
-    const apiUrl = `http://158.69.118.209:20147/api/flux?prompt=${encodeURIComponent(prompt)}`;
+    const [prompt2, ratio = "1:1"] = prompt.includes("--ratio")
+      ? prompt.split("--ratio").map(s => s.trim())
+      : [prompt, "1:1"];
 
-    try {
-      const response = await axios.get(apiUrl);
+    const startTime = Date.now();
+    
+    const waitMessage = await api.sendMessage("Generating image, please wait... 😘", event.threadID);
+    api.setMessageReaction("⌛", event.messageID, () => {}, true);
 
-      if (!response.data || !response.data.imageUrl) {
-        return message.reply("Failed to generate image, please try again.");
-      }
+    const apiurl = `${dipto}/flux?prompt=${encodeURIComponent(prompt2)}&ratio=${encodeURIComponent(ratio)}`;
+    const response = await axios.get(apiurl, { responseType: "stream" });
 
-      const imageUrl = response.data.imageUrl;
-      const imagePath = path.resolve(__dirname, 'cache', `${Date.now()}.jpg`);
+    const timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
 
-      const writer = fs.createWriteStream(imagePath);
-      const imageResponse = await axios({
-        url: imageUrl,
-        method: 'GET',
-        responseType: 'stream'
-      });
+    api.setMessageReaction("✅", event.messageID, () => {}, true);
+    api.unsendMessage(waitMessage.messageID);
 
-      imageResponse.data.pipe(writer);
-
-      writer.on('finish', () => {
-        message.reply({
-          body: `Here is the generated image for your prompt: "${prompt}"`,
-          attachment: fs.createReadStream(imagePath)
-        }, () => {
-          fs.unlinkSync(imagePath);
-        });
-      });
-
-      writer.on('error', (err) => {
-        message.reply("Error downloading the image.");
-      });
-
-    } catch (error) {
-      console.error("Error:", error);
-      message.reply("An error occurred while processing your request.");
-    }
+    api.sendMessage({
+      body: `Here's your image (Generated in ${timeTaken} seconds)`,
+      attachment: response.data,
+    }, event.threadID, event.messageID);
+    
+  } catch (e) {
+    console.error(e);
+    api.sendMessage("Error: " + e.message, event.threadID, event.messageID);
   }
 };
