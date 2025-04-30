@@ -1,8 +1,8 @@
- const axios = require('axios');
+const axios = require('axios');
 const UPoLPrefix = [
   'edu',
   'ai',
-  'lovely,
+  'Megan',
   'bot',
   'ask'
 ]; 
@@ -28,7 +28,7 @@ const UPoLPrefix = [
       
      const upol = event.body.substring(ahprefix.length).trim();
    if (!upol) {
-        await message.reply('𝐥𝐨𝐯𝐞𝐥𝐲 𝐟𝐨𝐫𝐞𝐯𝐞𝐫 ✨\n━━━━━━━━━━━━━\n𝐒𝐚𝐥𝐮𝐭 𝐣𝐞 𝐩𝐞𝐮𝐱 𝐟𝐚𝐢𝐫𝐞 𝐪𝐮𝐨𝐢 𝐩𝐨𝐮𝐫 𝐯𝐨𝐮𝐬 ?);
+        await message.reply('𝗘𝗱𝘂𝗰𝗮𝘁𝗶𝗼𝗻𝗮𝗹 ✨\n━━━━━━━━━━━━━\nAsk Me Your Question');
         return;
       }
       
@@ -50,7 +50,7 @@ const UPoLPrefix = [
  
      const UPoL = response.data.answer; 
 
-      const upolres = `𝐥𝐨𝐯𝐞𝐥𝐲 𝐟𝐨𝐫𝐞𝐯𝐞𝐫 ✨\n━━━━━━━━━━━━━\n${UPoL}`;
+      const upolres = `𝗘𝗱𝘂𝗰𝗮𝘁𝗶𝗼𝗻𝗮𝗹 ✨\n━━━━━━━━━━━━━\n${UPoL}`;
       
         message.reply(upolres);
   }
